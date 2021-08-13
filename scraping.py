@@ -11,26 +11,49 @@ display(HTML("<style>.container { width:100% !important; }</style>"))
 executable_path = {'executable_path': ChromeDriverManager().install()}
 browser = Browser('chrome', **executable_path, headless = False)
 
-# visit url
-url = 'https://redplanetscience.com'
-browser.visit(url)
+#LOCATE THE TITLE
+#------------------------------------------------------------------------------------------------
+#define function so it can be called
+def mars_news(browser):
+        
+    # scrape mars news
+    # visit the mars nasa news site
+    url = 'https://redplanetscience.com'
+    browser.visit(url)
 
-# optional delay for loading page
-browser.is_element_present_by_css('div.list_text', wait_time=1)
+    # optional delay for loading page
+    browser.is_element_present_by_css('div.list_text', wait_time=1)
 
-# set up the parser
-html = browser.html
-news_soup = soup(html, 'html.parser')
-slide_elem = news_soup.select_one('div.list_text')
-slide_elem.find('div', class_='content_title')
+    # set up the parser/Convert the browser html to a soup object and then quit the browser
+    html = browser.html
+    news_soup = soup(html, 'html.parser')
+    
 
-# Use the parent element to find the first `a` tag and save it as `news_title`
-news_title = slide_elem.find('div', class_='content_title').get_text()
-news_title
+    #add try/except for error handling
+    try:
+        slide_elem = news_soup.select_one('div.list_text')
+        #use the parent element to find the first 'a' tag and save it as 'news_title'
+        news_title = slide_elem.find('div', class_='content_title').get_text()
+        #use the parent element to find the paragraph text
+        news_p = slide_elem.fid('div', class_='article_teaswer_body').get_text()
+        except AttributeError:
+            return None, None
 
-news_p = slide_elem.find('div', class_='article_teaser_body').get_text()
-news_p
+        return news_title, news_p               
+    slide_elem = news_soup.select_one('div.list_text')
+    slide_elem.find('div', class_='content_title')
 
+    # Use the parent element to find the first `a` tag and save it as `news_title`
+    news_title = slide_elem.find('div', class_='content_title').get_text()
+    news_title
+
+    news_p = slide_elem.find('div', class_='article_teaser_body').get_text()
+    news_p
+
+#LOCATE THE IMAGE
+#----------------------------------------------------------------------------------------
+#define function so it can be called
+def featured_image(browser):
 url = 'https://spaceimages-mars.com/'
 browser.visit(url)
 
@@ -42,16 +65,37 @@ full_image_elem.click()
 html = browser.html
 img_soup = soup(html, 'html.parser')
 
-# find the relative image url
-img_url_rel = img_soup.find('img', class_='fancybox-image').get('src')
-img_url_rel
+#add try/except for error handling
+try:
+    #find the relative image url
+    img_url_rel = img_soup.find('img', class_='fancybox-image').get('scr')
+
+    except AttributeError:
+        return None    
+
+# # find the relative image url
+# img_url_rel = img_soup.find('img', class_='fancybox-image').get('src')
+# img_url_rel
 
 # use the base url to coreate a absolute url
 img_url = f'https://spaceimages-mars.com/{img_url_rel}'
 
-df = pd.read_html('https://galaxyfacts-mars.com')[0]
-df.columns = ['description', 'mars', 'earth']
-df.set_index('description', inplace = True)
-df.to_html()
+#LOCATE THE FUN FACTS
+#------------------------------------------------------------------------------------------
+def mars_facts():
+    # Add try/except for error handling
+    try:
+        # Use 'read_html' to scrape the facts table into a dataframe
+        df = pd.read_html('https://galaxyfacts-mars.com')[0]
+
+    except BaseException:
+        return None
+
+    # Assign columns and set index of dataframe
+    df.columns=['Description', 'Mars', 'Earth']
+    df.set_index('Description', inplace=True)
+
+    # Convert dataframe into HTML format, add bootstrap
+    return df.to_html()
 
 browser.quit()
