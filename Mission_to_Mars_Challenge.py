@@ -6,6 +6,9 @@ import pandas as pd
 import datetime as dt
 from os import name
 
+from IPython.core.display import display, HTML
+display(HTML("<style>.container { width:100% !important; }</style>"))
+
 # set up splinter & initiate headless driver for deployment
 def scrape_all():
     executable_path = {'executable_path': ChromeDriverManager().install()}
@@ -21,20 +24,16 @@ def scrape_all():
         "facts": mars_facts(),
         "last_modified": dt.datetime.now()
     }
-# Deliverable 2 #2 - In the def scrape_all() function in your scraping.py file, create a new dictionary in the data dictionary 
-        # to hold a list of dictionaries with the URL string and title of each hemisphere image.
-    images = {
-        "image_url": image,
-        "image_title": title
-    }
     
     # Stop webdriver and return data
     browser.quit()
     return data
 
+
 #######################################################################################
 # LOCATE THE TITLE
 #######################################################################################
+
 # define function so it can be called
 def mars_news(browser):    
     # scrape mars news
@@ -60,9 +59,11 @@ def mars_news(browser):
         return None, None
     return news_title, news_p
 
+
 ######################################################################################
-#LOCATE THE IMAGE
+# LOCATE THE IMAGE
 ######################################################################################
+
 #define function so it can be called
 def featured_image(browser):
     url = 'https://spaceimages-mars.com/'
@@ -87,11 +88,12 @@ def featured_image(browser):
     img_url = f'https://spaceimages-mars.com/{img_url_rel}'
     print(img_url_rel)
     return img_url
-    
 
-######################################################################################
-#LOCATE THE FUN FACTS
-######################################################################################
+
+#####################################################################################
+# LOCATE THE FUN FACTS
+#####################################################################################
+
 def mars_facts():
     # Add try/except for error handling
     try:
@@ -110,11 +112,6 @@ def mars_facts():
     #if running as script, print scraped data
     # print(scrape_all())
 
-
-###############################
-# Start of Challenge
-###############################
-
 # Import Splinter, BeautifulSoup, and Pandas
 from splinter import Browser
 from bs4 import BeautifulSoup as soup
@@ -126,6 +123,8 @@ executable_path = {'executable_path': ChromeDriverManager().install()}
 browser = Browser('chrome', **executable_path, headless=False)
 
 # Visit the NASA Mars News Site
+
+# Visit the mars nasa news site
 url = 'https://redplanetscience.com/'
 browser.visit(url)
 
@@ -171,7 +170,8 @@ img_url_rel
 img_url = f'https://spaceimages-mars.com/{img_url_rel}'
 img_url
 
-# ### Mars Facts
+# Mars Facts
+
 df = pd.read_html('https://galaxyfacts-mars.com')[0]
 df.head()
 
@@ -181,42 +181,32 @@ df
 
 df.to_html()
 
-###################################################################################
 # D1: Scrape High-Resolution Mars’ Hemisphere Images and Titles
-
 # Hemispheres
-###################################################################################
 
 # 1. Use browser to visit the URL 
-# Deliverable 2 - #3 create a function that will scrape the hemisphere data by using your code from the 
-              #   Mission_to_Mars_Challenge.py file. At the end of the function, return the scraped data as a list of 
-              #   dictionaries with the URL string and title of each hemisphere image.
+url = 'https://marshemispheres.com/'
+browser.visit(url)
 
-def hemi_image(browser):
-    url = 'https://marshemispheres.com/'
-    browser.visit(url)
+# 2. Create a list to hold the images and titles.
+hemisphere_image_urls = []
+items = browser.find_by_css("a.product-item h3")
 
-    # 2. Create a list to hold the images and titles.
-    hemisphere_image_urls = []  
-    items = browser.find_by_css("a.product-item h3")
+# 3. Write code to retrieve the image urls and titles for each hemisphere.
+#define function so it can be called
+for image in range(4):
+    hemispheres = {}
+    browser.find_by_css('a.product-item h3')[image].click()
+    element = browser.find_link_by_text('Sample').first
+    img_url = element['href']
+    title = browser.find_by_css("h2.title").text
+    hemispheres["img_url"] = img_url
+    hemispheres["title"] = title
+    hemisphere_image_urls.append(hemispheres)
+    browser.back()
 
-# 3. Write code to retrieve the image urls and titles for each hemisphere.   
-    try:
-        for image in range(4):
-            hemispheres = {}
-            browser.find_by_css('a.product-item h3')[image].click()
-            element = browser.find_link_by_text('Sample').first
-            img_url = element['href']
-            title = browser.find_by_css("h2.title").texta
-            hemispheres["img_url"] = img_url
-            hemispheres["title"] = title
-            hemisphere_image_urls.append(hemispheres)
-            browser.back()
-    except AttributeError:
-        return None
-
-    # 4. Print the list that holds the dictionary of each image url and title.
-        return hemisphere_image_urls
+# 4. Print the list that holds the dictionary of each image url and title.
+hemisphere_image_urls
 
 # 5. Quit the browser
 browser.quit()
