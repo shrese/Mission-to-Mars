@@ -9,7 +9,7 @@ The purpose of this project was to scrape websites and build a new site.  We use
 2. spaceimages-mars.com to locate a recent image for our webpage.
 3. galaxyfacts-mars.com to locate fun facts about mars that were put in a table from a DataFrame for easy visualization.
 
-![]( Resources/webpage.PNG)
+![]( Resources/webpage.png)
 
 ## Challenge 
 
@@ -21,6 +21,6 @@ Deliverable two added code to the index.html file that would add the images to t
 
 Finally, in deliverable three asked for us to add formatting to the site using code from bootstraps. I added some simple formatting by underlining the title of the site and changing the color of the scraping button.  I also worked to ensure that the site was mobile responsive.
 
-![]( Resources/mobileready.png)
+![]( Resources/mobileready.PNG)
 
 I tried to a carousel to the hemisphere images so that the site would also be interactive.  I was unsuccessful, but will keep trying.
