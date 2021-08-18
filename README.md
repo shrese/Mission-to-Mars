@@ -1,7 +1,7 @@
 # Mission to Mars
 
 ## Purpose
-The purpose of this project was to scrape websites and build a new site.  We used two different site for scraping.  During the exercises we scraped the following:
+The purpose of this project was to scrape websites and build a new site.  We used four different site for scraping.  During the exercises we scraped the following:
 
 1. redplanetscience.com to locate a recent article for our webpage.  We used:
     * The title of the most recent article.
